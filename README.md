@@ -1,3 +1,4 @@
+```
  ███▄    █ ▓█████▄▄▄█████▓ █     █░ ▄▄▄     ▄▄▄█████▓ ▄████▄   ██░ ██ 
  ██ ▀█   █ ▓█   ▀▓  ██▒ ▓▒▓█░ █ ░█░▒████▄   ▓  ██▒ ▓▒▒██▀ ▀█  ▓██░ ██▒
 ▓██  ▀█ ██▒▒███  ▒ ▓██░ ▒░▒█░ █ ░█ ▒██  ▀█▄ ▒ ▓██░ ▒░▒▓█    ▄ ▒██▀▀██░
@@ -8,10 +9,10 @@
    ░   ░ ░    ░    ░        ░   ░    ░   ▒    ░      ░         ░  ░░ ░
          ░    ░  ░            ░          ░  ░        ░ ░       ░  ░  ░
                                                      ░                
-
+```
 Netwatch is a Python based local network discovery and security monitoring tool. 
 
-##Goals
+## Goals
 
 - Discover devices on the local network
 - Display IP and MAC addresses
@@ -20,7 +21,7 @@ Netwatch is a Python based local network discovery and security monitoring tool.
 - Provide basic security info
 - Eventually provide a web dashboard
 
-##Status
+## Status
 
 Early development
 
