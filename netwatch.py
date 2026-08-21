@@ -1,68 +1,114 @@
-import ipaddress
+import os
 import socket
+import ipaddress
+
 from scapy.all import ARP, Ether, srp
+from mac_vendor_lookup import MacLookup, BaseMacLookup
+
+
+mac_lookup = MacLookup()
+
+
+def initialize_vendor_db():
+    """Initialize the MAC vendor database."""
+    try:
+        if not os.path.exists(BaseMacLookup.cache_path):
+            print("[*] Downloading MAC vendor database (first-time setup)...")
+            mac_lookup.update_vendors()
+        else:
+            mac_lookup.load_vendors()
+
+    except Exception as error:
+        print(f"[!] Could not update MAC vendor database: {error}")
+
+        try:
+            mac_lookup.load_vendors()
+        except Exception:
+            print("[!] MAC vendor database unavailable.")
 
 
 def get_hostname(ip):
-  try:
-    hostname = socket.gethostbyaddr(ip)[0]
-    return hostname
-  except socket.herror:
-    return "Unknown"
+    """Try to find the hostname associated with an IP address."""
+    try:
+        hostname = socket.gethostbyaddr(ip)[0]
+        return hostname
+    except socket.herror:
+        return "Unknown"
 
 
-# scan the network for active devices
+def get_vendor(mac):
+    """Try to identify the manufacturer from a MAC address."""
+    try:
+        return mac_lookup.lookup(mac)
+    except KeyError:
+        return "Unknown"
+
+
 def scan_network(network):
-  arp_request = ARP(pdst=str(network))
-  broadcast = Ether(dst="ff:ff:ff:ff:ff:ff")
-  packet = broadcast / arp_request
+    """Discover devices on the local network using ARP."""
+    arp_request = ARP(pdst=str(network))
 
-  answered = srp(packet, timeout=2, verbose=False)[0]
+    broadcast = Ether(dst="ff:ff:ff:ff:ff:ff")
 
-  devices = []
+    packet = broadcast / arp_request
 
-  for sent, received in answered:
-    hostname = get_hostname(received.psrc)
+    answered = srp(
+        packet,
+        timeout=2,
+        verbose=False
+    )[0]
 
-    devices.append(
-        {"ip": received.psrc, "mac": received.hwsrc, "hostname": hostname}
-    )
+    devices = []
 
-  return devices
+    for sent, received in answered:
+        hostname = get_hostname(received.psrc)
+        vendor = get_vendor(received.hwsrc)
+
+        devices.append({
+            "ip": received.psrc,
+            "mac": received.hwsrc,
+            "hostname": hostname,
+            "vendor": vendor
+        })
+
+    return devices
 
 
 def main():
-  hostname = socket.gethostname()
-  local_ip = socket.gethostbyname(hostname)
-  network = ipaddress.ip_network(local_ip + "/24", strict=False)
+    initialize_vendor_db()
 
-  print("""
-███▄    █ ▓█████▄▄▄█████▓ █     █░ ▄▄▄     ▄▄▄█████▓ ▄████▄   ██░ ██ 
- ██ ▀█   █ ▓█   ▀▓  ██▒ ▓▒▓█░ █ ░█░▒████▄   ▓  ██▒ ▓▒▒██▀ ▀█  ▓██░ ██▒
-▓██  ▀█ ██▒▒███  ▒ ▓██░ ▒░▒█░ █ ░█ ▒██  ▀█▄ ▒ ▓██░ ▒░▒▓█    ▄ ▒██▀▀██░
-▓██▒  ▐▌██▒▒▓█  ▄░ ▓██▓ ░ ░█░ █ ░█ ░██▄▄▄▄██░ ▓██▓ ░ ▒▓▓▄ ▄██▒░▓█ ░██ 
-▒██░   ▓██░░▒████▒ ▒██▒ ░ ░░██▒██▓  ▓█   ▓██▒ ▒██▒ ░ ▒ ▓███▀ ░░▓█▒░██▓
-░ ▒░   ▒ ▒ ░░ ▒░ ░ ▒ ░░   ░ ▓░▒ ▒   ▒▒   ▓▒█░ ▒ ░░   ░ ░▒ ▒  ░ ▒ ░░▒░▒
-░ ░░   ░ ▒░ ░ ░  ░   ░      ▒ ░ ░    ▒   ▒▒ ░   ░      ░  ▒    ▒ ░▒░ ░
-   ░   ░ ░    ░    ░        ░   ░    ░   ▒    ░      ░         ░  ░░ ░
-         ░    ░  ░            ░          ░  ░        ░ ░       ░  ░  ░
-                                                     ░                  
-    """)
-  print("-----------------------------------------------------------------")
-  print(f"Hostname: {hostname}")
-  print(f"Local IP: {local_ip}")
-  print(f"Network: {network}")
-  print()
-  print(f"Scanning network {network} for active devices...")
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
 
-  devices = scan_network(network)
+    network = ipaddress.ip_network(
+        f"{local_ip}/24",
+        strict=False
+    )
 
-  for device in devices:
-    print(f"[+] {device['ip']} - {device['mac']} - {device['hostname']}")
+    print()
+    print("NetWatch")
+    print("========")
+    print(f"Hostname: {hostname}")
+    print(f"Local IP: {local_ip}")
+    print(f"Network: {network}")
+    print()
 
-  print()
-  print(f"{len(devices)} devices found.")
+    print(f"Scanning {network}...")
+    print()
+
+    devices = scan_network(network)
+
+    for device in devices:
+        print(
+            f"[+] {device['ip']} | "
+            f"{device['mac']} | "
+            f"{device['hostname']} | "
+            f"{device['vendor']}"
+        )
+
+    print()
+    print(f"{len(devices)} devices found.")
 
 
 if __name__ == "__main__":
-  main()
+    main()
