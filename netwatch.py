@@ -110,7 +110,7 @@ def export_results(devices):
 
     try:
         if choice == "json":
-            with open(filename, "w", encoding="utf-8") as f:
+            with open(filename, "w", encoding="utf-8") as f: 
                 json.dump([asdict(device) for device in devices], f, indent=4)
             print(f"[*] Results successfully exported to {filename}")
         elif choice == "csv":
