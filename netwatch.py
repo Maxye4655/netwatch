@@ -1,10 +1,13 @@
 import os
 import socket
 import ipaddress
+import datetime
+import json
+import csv
 
 from scapy.all import ARP, Ether, srp
 from mac_vendor_lookup import MacLookup, BaseMacLookup
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 
 
@@ -41,7 +44,6 @@ def initialize_vendor_db():
 
 
 def get_hostname(ip):
-    """Try to find the hostname associated with an IP address."""
     try:
         hostname = socket.gethostbyaddr(ip)[0]
         return hostname
@@ -50,7 +52,6 @@ def get_hostname(ip):
 
 
 def get_vendor(mac):
-    """Try to identify the manufacturer from a MAC address."""
     try:
         return mac_lookup.lookup(mac)
     except KeyError:
@@ -58,7 +59,6 @@ def get_vendor(mac):
 
 
 def scan_network(network):
-    """Discover devices on the local network using ARP."""
     arp_request = ARP(pdst=str(network))
 
     broadcast = Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -87,6 +87,41 @@ def scan_network(network):
 )
 
     return devices
+
+
+def export_results(devices):
+    if not devices:
+        print("[!] No devices to export.")
+        return
+
+    print()
+    choice = (
+        input("Would you like to export the results? (json/csv/none): ")
+        .strip()
+        .lower()
+    )
+
+    if choice not in ["json", "csv"]:
+        print("[*] Skipping export.")
+        return
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"network_scan_{timestamp}.{choice}"
+
+    try:
+        if choice == "json":
+            with open(filename, "w", encoding="utf-8") as f:
+                json.dump([asdict(device) for device in devices], f, indent=4)
+            print(f"[*] Results successfully exported to {filename}")
+        elif choice == "csv":
+            with open(filename, "w", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow(["IP Address", "MAC Address", "Hostname", "Vendor"])
+                for d in devices:
+                    writer.writerow([d.ip, d.mac, d.hostname, d.vendor])
+            print(f"[+] Successfully exported results to {filename}")
+    except Exception as e:
+        print(f"[!] Error occurred while exporting results: {e}")
 
 
 def main():
@@ -125,11 +160,13 @@ def main():
     devices = scan_network(network)
 
     for device in devices:
-        print(f"[+] {device}")
+      print(f"[+] {device}")
 
     print()
     print(f"{len(devices)} devices found.")
 
+    export_results(devices)
+
 
 if __name__ == "__main__":
-    main()
+  main()
