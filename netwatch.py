@@ -4,6 +4,17 @@ import ipaddress
 
 from scapy.all import ARP, Ether, srp
 from mac_vendor_lookup import MacLookup, BaseMacLookup
+from dataclasses import dataclass
+
+
+
+@dataclass
+class Device:
+    ip: str
+    mac: str
+    hostname: str
+    vendor: str
+
 
 
 mac_lookup = MacLookup()
@@ -63,12 +74,14 @@ def scan_network(network):
         hostname = get_hostname(received.psrc)
         vendor = get_vendor(received.hwsrc)
 
-        devices.append({
-            "ip": received.psrc,
-            "mac": received.hwsrc,
-            "hostname": hostname,
-            "vendor": vendor
-        })
+        devices.append(
+            Device(
+                ip=received.psrc,
+                mac=received.hwsrc,
+                hostname=hostname,
+                vendor=vendor
+            )
+)
 
     return devices
 
@@ -97,7 +110,7 @@ def main():
          ░    ░  ░            ░          ░  ░        ░ ░       ░  ░  ░
                                                      ░                
                                                      """)
-    print("========")
+    print()
     print(f"Hostname: {hostname}")
     print(f"Local IP: {local_ip}")
     print(f"Network: {network}")
@@ -110,10 +123,10 @@ def main():
 
     for device in devices:
         print(
-            f"[+] {device['ip']} | "
-            f"{device['mac']} | "
-            f"{device['hostname']} | "
-            f"{device['vendor']}"
+            f"[+] {device.ip} | "
+            f"{device.mac} | "
+            f"{device.hostname} | "
+            f"{device.vendor}"
         )
 
     print()
