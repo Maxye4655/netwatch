@@ -17,12 +17,18 @@ Netwatch is a simple, local network discovery tool built with python.
 * **Full Screen TUI:** Built with curses.
 * **Data Export:** Export scan results instantly to JSON or CSV formats with automated timestamps.
 
+## Screenshot
+
+![Screenshot of what Netwatch should look like](/Assets/Netwatch_screenshot.png)
+
+If it looks like this, you have set it up correctly ദ്ദി(｡•̀ ,<)~✩‧₊
+
 ## Dependencies
 
 * Python 3.8+
 * Scapy
 
-Install Pyhton:
+# Install Python:
 
 Fedora:
 
