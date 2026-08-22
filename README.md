@@ -22,12 +22,12 @@ Netwatch is a simple, local network discovery tool built with python.
 * Python 3.8+
 * Scapy
 
-Install:
+Install Pyhton:
 
 Fedora:
 
 ```
-sudo dnf install python3 python3-scapy
+sudo dnf install python3 
 ```
 
 Windows (Powershell):
@@ -35,15 +35,9 @@ Windows (Powershell):
 winget install -e --id Python.Python.3.12
 ```
 
-Open a new terminal session and then run:
-
-```
-pip install scapy
-```
-
 Arch:
 ```
-sudo pacman -S python python-scapy
+sudo pacman -S python 
 ```
 
 ---
@@ -56,9 +50,9 @@ sudo pacman -S python python-scapy
    cd netwatch
    ```
 
-2. Install the required dependencies:
+2. Install the required python dependencies:
    ```
-   pip install mac-vendor-lookup
+   pip install mac-vendor-lookup scapy
    ```
 
 ---
