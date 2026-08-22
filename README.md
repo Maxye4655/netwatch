@@ -7,71 +7,70 @@
 ```
 # NetWatch
 
-NetWatch is a lightweight, terminal-based local network discovery and reconnaissance tool written in Python. It scans your local subnet using ARP requests, resolves hostnames, identifies device manufacturers via MAC address OUI lookups, and features a clean interactive text UI (TUI) built with curses.
-
----
+Netwatch is a simple, local network discovery tool built with python. 
 
 ## Features
 
-* **Subnet Auto-Discovery:** Automatically detects your local IP and scans the /24 network.
-* **ARP Network Scanning:** Fast and reliable device discovery using scapy.
+* **Subnet Auto-Discovery:** Automatically detects local IP and scans the /24 network.
+* **ARP Network Scanning:** Uses Address Resolution Protocol requests to map active IP addresses to their physical MAC addresses on a local subnet
 * **Hostname Resolution:** Attempts reverse DNS lookups for discovered IP addresses.
 * **Vendor Identification:** Identifies hardware manufacturers using local MAC OUI lookup databases.
-* **Interactive Terminal UI (TUI):** Built with curses, featuring real-time status updates and animated spinners.
-* **Data Export:** Export your scan results instantly to JSON or CSV formats with automated timestamps.
+* **Full Screen TUI:** Built with curses.
+* **Data Export:** Export scan results instantly to JSON or CSV formats with automated timestamps.
 
----
-
-## Prerequisites
-
-Because NetWatch crafts low-level ARP packets via scapy, **root/administrator privileges** are required to run the script.
+## Dependencies
 
 * Python 3.8+
-* Scapy (requires raw socket permissions)
+* Scapy
+
+Install:
+
+Fedora:
+
+```
+sudo dnf install python3 python3-scapy
+```
+
+Windows (Powershell):
+```
+winget install -e --id Python.Python.3.12
+```
+
+Open a new terminal session and then run:
+
+```
+pip install scapy
+```
+
+Arch:
+```
+sudo pacman -S python python-scapy
+```
 
 ---
 
 ## Installation
 
-1. Clone or download the repository:
-   ```bash
+1. Clone the repository:
+   ```
    git clone [https://github.com/your-username/netwatch.git](https://github.com/your-username/netwatch.git)
    cd netwatch
    ```
 
 2. Install the required dependencies:
-   ```bash
-   pip install scapy mac-vendor-lookup
+   ```
+   pip install mac-vendor-lookup
    ```
 
 ---
 
 ## Usage
 
-Run the script with administrator privileges (using sudo on Linux/macOS or an elevated prompt on Windows):
+Run the script:
 
 ```bash
 sudo python3 netwatch.py
 ```
-
-### Exporting Results
-Once the network scan completes and displays the discovered devices, NetWatch will prompt you directly inside the terminal:
-* Press **j** to export results to a timestamped `network_scan_YYYYMMDD_HHMMSS.json` file.
-* Press **c** to export results to a timestamped `network_scan_YYYYMMDD_HHMMSS.csv` file.
-* Press any other key to skip exporting.
-
----
-
-## Project Structure
-
-```text
-netwatch/
-│
-├── netwatch.py          # Main application script
-└── README.md            # Project documentation
-```
-
----
 
 ## Built With
 
