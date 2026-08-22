@@ -65,13 +65,19 @@ sudo pacman -S python python-scapy
 
 ## Usage
 
-Run the script:
+Run the script from inside the directory:
 
 ```bash
 sudo python3 netwatch.py
 ```
 
-## Built With
+Or from outside the directory:
+
+```bash
+sudo python3 #paste relative path to netwatch.py <--- here
+```
+
+## 
 
 * [Python](https://www.python.org/) - Core programming language
 * [Scapy](https://scapy.net/) - Packet manipulation and ARP scanning
