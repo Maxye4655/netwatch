@@ -15,7 +15,10 @@ class Device:
     hostname: str
     vendor: str
 
-
+    def __str__(self):
+        return (
+            f"{self.ip} | {self.mac} | {self.hostname} | {self.vendor}"
+        )
 
 mac_lookup = MacLookup()
 
@@ -79,7 +82,7 @@ def scan_network(network):
                 ip=received.psrc,
                 mac=received.hwsrc,
                 hostname=hostname,
-                vendor=vendor
+                vendor=vendor,
             )
 )
 
@@ -122,12 +125,7 @@ def main():
     devices = scan_network(network)
 
     for device in devices:
-        print(
-            f"[+] {device.ip} | "
-            f"{device.mac} | "
-            f"{device.hostname} | "
-            f"{device.vendor}"
-        )
+        print(f"[+] {device}")
 
     print()
     print(f"{len(devices)} devices found.")
