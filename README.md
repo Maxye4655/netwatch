@@ -53,7 +53,7 @@ sudo pacman -S python python-scapy
 
 1. Clone the repository:
    ```
-   git clone [https://github.com/your-username/netwatch.git](https://github.com/your-username/netwatch.git)
+   git clone https://github.com/Maxye4655/netwatch.git
    cd netwatch
    ```
 
